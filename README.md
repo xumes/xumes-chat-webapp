@@ -4,10 +4,6 @@ Frontend features for Xumes Chat
 
 This is part of the Xumes Chat family :
 
-<<<<<<< HEAD
-* [Xumes Chat Admin] (administrative features)
-=======
-* [Xumes Chat Admin] (https://github.ibm.com/rmsantos/xumes-chat-admin) (administrative features)
->>>>>>> b802b8305a4004cdcec32aeeaf35f7ca650355dc
-* Xumes Chat webapp (frontend)
-* Xumes Chat API (backend)
+* [Xumes Chat Admin] (https://github.com/xumes/xumes-chat-admin) (administrative features)
+* [Xumes Chat Webapp] (https://github.com/xumes/xumes-chat-webapp) (frontend)
+* [Xumes Chat API] (https://github.com/rmsantos/xumes-chat-api) (backend)
