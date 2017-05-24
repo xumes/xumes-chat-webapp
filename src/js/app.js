@@ -26,11 +26,28 @@ $(document).ready(function() {
 
       })
     }
+
+    var getUsers = function() {
+      $.get('http://localhost:3000/users', function(data) {
+        if (!data.status) {
+          return
+        }
+
+        var users = data && data.users
+        users.forEach(function(user, index) {
+            var userTemplate = '<li class="list-group-item user" user="' + user._id + '" username="' + user.name + '"> ' + user.name + ' </li>'
+            $('.messages').append(userTemplate)
+        })
+
+      })
+    }
     getRooms()
+    getUsers()
   })()
 
   var socket = io('//localhost:3000')
   var currentRoom = undefined
+  var currentUser = undefined
 
   $('.channels').on('click', '.channel', function(e) {
   		var roomId = $(this).attr('channel')
@@ -46,6 +63,22 @@ $(document).ready(function() {
 
     $('.conversation').html('')
 
+    return false
+  })
+
+  $('.messages').on('click', '.user', function(e){
+    var username = $(this).attr('username')
+		var user = $(this).attr('user')
+
+      socket.emit('join user', {
+        userId: user,
+			  username: username
+      })
+
+      console.log("user id", user)
+      console.log("username", username)
+
+    $('.conversation').html('')
     return false
   })
 
@@ -67,10 +100,17 @@ $(document).ready(function() {
         return
       }
 
-      socket.emit('message room', {
-        message: message,
-        room: currentRoom
-      })
+      if(!currentRoom){
+        socket.emit('message user', {
+          message: message,
+          user: currentUser
+        })
+      } else {
+        socket.emit('message room', {
+          message: message,
+          room: currentRoom
+        })
+      }
 
       var msgTemplate =  '<div class="col-xs-12 message">' +
                       '  <div class="avatar col-xs-6 col-md-1">' +
@@ -86,6 +126,12 @@ $(document).ready(function() {
     }
   })
 
+  socket.on('joined user', function(data) {
+    currentUser = data.user
+    $('.username').html('@' + data.username)
+    $('.chatbox').show()
+  })
+
   socket.on('joined room', function(data) {
     currentRoom = data.room
     $('.username').html('@' + data.roomName)
@@ -98,7 +144,7 @@ $(document).ready(function() {
     $('.conversation').html('')
   })
 
-  socket.on('message room', function(data) {
+  socket.on('messaged', function(data) {
     if(!data.message) {
       return
     }
